@@ -1,0 +1,42 @@
+FROM node:current-bullseye
+
+# Install system packages
+RUN apt-get update && \
+    apt-get install -y nginx openssl vim zsh curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create necessary directories
+RUN mkdir -p /var/lib/nginx/transcendence/dist \
+    && mkdir -p /etc/nginx/ssl
+
+# Copy front-end project files
+COPY front-end/tsconfig.json /var/lib/nginx/transcendence/tsconfig.json
+COPY front-end/src /var/lib/nginx/transcendence/src
+COPY front-end/index.html /var/lib/nginx/transcendence/index.html
+COPY front-end/assets/ /var/lib/nginx/transcendence/dist/assets/
+
+# Copy custom NGINX config
+COPY front-end/nginx-lite.conf /etc/nginx/nginx.conf
+
+# Generate self-signed SSL certificate (static CN value to avoid build-time env issues)
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -out /etc/nginx/ssl/transcendence.crt \
+    -keyout /etc/nginx/ssl/transcendence.key \
+    -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=localhost"
+
+# Set working directory for frontend
+WORKDIR /var/lib/nginx/transcendence
+
+# Install TypeScript and compile
+RUN npm install -g typescript && \
+    npx tsc
+
+# Install TailwindCSS and compile CSS
+RUN npm install tailwindcss @tailwindcss/cli && \
+    npx tailwindcss -i ./src/input.css -o ./dist/output.css
+
+# Expose ports
+EXPOSE 80 443
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

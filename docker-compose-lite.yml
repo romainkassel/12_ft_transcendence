@@ -1,0 +1,56 @@
+version: '2.4'
+
+services:
+  front-end:
+    image: front-end
+    container_name: front-end
+    build:
+      context: .
+      dockerfile: ./front-end/Dockerfile-lite
+    ports:
+      - 8080:8080
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    env_file:
+      - .env
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    ports:
+      - "8181:8181"
+      - "9000:9000"
+    volumes:
+      - sqlite-data:/data
+      - /app/node_modules
+      - avatars:/avatars
+    environment:
+      - SQLITE_DB_PATH=/data/database.sqlite
+    env_file:
+      - .env
+    depends_on:
+      - sqlite
+    networks:
+      - transcendence-network
+
+  sqlite:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    volumes:
+      - sqlite-data:/data
+
+networks:
+  transcendence-network:
+    driver: bridge
+
+volumes:
+  sqlite-data:
+  avatars:

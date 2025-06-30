@@ -2,6 +2,10 @@ all:
 	@sh ipsetter.sh
 	@(docker-compose up --build)
 
+lite:
+	@sh ipsetter.sh
+	@(docker-compose -f ./docker-compose-lite.yml up --build)
+
 stop:
 	docker-compose stop
 
