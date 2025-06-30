@@ -30,7 +30,23 @@ This project focuses on the design, development and organisation of a complete w
 
 <img width="609" alt="console_ft_transcendence_ecole_42" src="https://github.com/user-attachments/assets/15d7f571-553d-4ba2-aa9c-99670efd1af6" />
 
-9. You can now open your favorite browser, 
+9. Now you can open your favorite browser and go the following URL: `https://localhost:8080`
 
+> [!NOTE]
+> You are warned that the site is not secure and it is true<br/>
+> We used the HTTPS protocol for this website and, as a student project, we have not submitted the SSL certificates for validation by an official authority<br/>
+> You can trust us and agree to continue browsing our website despite this warning!
 
+10. Here you go! If everything went smoothly, the site should be displayed and you can start exploring.
 
+<img width="1470" alt="page_login_ft_transcendence_ecole_42" src="https://github.com/user-attachments/assets/e958a5b3-6e7d-473c-950d-3c1559b810b2" />
+
+> [!TIP]
+> Do not forget to create an account before trying to connect. Simply click on the `Create an account` link at the bottom of the page.
+
+## I tested the site and I'm happy. Now I'd like to clean it up. What do I do?
+
+1. In your terminal, stop Docker services by clicking on `CTRL + C`
+2. Run the following command to remove everything (containers, images and volumes): `make fclean`
+3. Go outside of the repository: `cd ..`
+4. Remove the repository: `rm -rf 12_ft_transcendence`
