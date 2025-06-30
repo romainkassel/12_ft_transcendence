@@ -1,0 +1,22 @@
+<!doctype html>
+<html class="h-full bg-white">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' https://cdn.jsdelivr.net https://cdn.socket.io/4.8.1/socket.io.min.js;
+      connect-src 'self' wss://{TRANSCENDENCE_IP}:8080/socket.io/;
+      img-src 'self' blob: data: https://images.unsplash.com/ https://tailwindcss.com/;
+      media-src 'self';
+      style-src 'self' 'unsafe-inline';
+    ">
+    <link href="/dist/output.css" rel="stylesheet">
+    <script type="module" src="/dist/common/events.js"></script>
+    <script type="module" src="/dist/index.js"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script type="module" src="/dist/socket.js"></script>
+  </head>
+  <body class="h-full">
+  </body>
+</html>

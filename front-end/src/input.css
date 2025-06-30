@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+    --animate-fade: fadein 0.5s, fadeout 0.5s 2.6s;
+    @keyframes fadein {
+        0% {
+            top: 0;
+            opacity: 0;
+        }
+        100% {
+            top: calc(var(--spacing) * 10);
+            opacity: 1;
+        }
+    }
+    @keyframes fadeout {
+        0% {
+            top: calc(var(--spacing) * 10);
+            opacity: 1;
+        }
+        100% {
+            top: 0;
+            opacity: 0;
+        }
+    }
+
+    --color-switch1-100: oklch(0.6684 0.1783 253.17);
+    --color-switch1-80: oklch(0.7344 0.1783 253.17);
+
+    --color-switch2-100: oklch(0.6287 0.254162 23.7604);
+    --color-switch2-80: oklch(0.6882 0.254162 23.7604);
+
+    --color-switch3-100: oklch(0.7484 0.1915 151.3);
+    --color-switch3-80: oklch(0.8383 0.1915 151.3);
+}

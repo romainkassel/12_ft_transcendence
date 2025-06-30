@@ -1,0 +1,191 @@
+version: '2.4'
+
+services:
+  front-end:
+    image: front-end
+    container_name: front-end
+    build:
+      context: .
+      dockerfile: ./front-end/Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+      - ./nginx-logs:/var/log/nginx
+    restart: unless-stopped
+    networks:
+      - transcendence-network
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - kibana
+
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    ports:
+      - "8181:8181"
+      - "9000:9000"
+    volumes:
+      - sqlite-data:/data
+      - /app/node_modules
+      - avatars:/avatars
+    environment:
+      - SQLITE_DB_PATH=/data/database.sqlite
+    env_file:
+      - .env
+    depends_on:
+      - sqlite
+    networks:
+      - transcendence-network
+
+  sqlite:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    volumes:
+      - sqlite-data:/data
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - transcendence-network
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    command:
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.external-url=https://localhost:8080/prometheus/
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
+      - prometheus-data:/prometheus
+    networks:
+      - transcendence-network
+    depends_on:
+      - cadvisor
+    restart: unless-stopped
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    depends_on:
+      - prometheus
+    volumes:
+    - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
+    env_file:
+      - .env
+    networks:
+      - transcendence-network
+    restart: unless-stopped
+
+  cert-generator:
+    container_name: cert-generator
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.18
+    volumes:
+      - certs:/certs
+      - ./monitoring/elk/certs:/usr/share/elasticsearch/config/certs
+    command: ['/usr/share/elasticsearch/config/certs/generate-certs.sh']
+    networks:
+      - transcendence-network
+
+  elasticsearch:
+    container_name: elasticsearch
+    depends_on:
+      - cert-generator
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.18
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+      - certs:/usr/share/elasticsearch/config/certs
+      - ./monitoring/elk/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - transcendence-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k -s https://localhost:9200/_cat/health || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  kibana:
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    image: docker.elastic.co/kibana/kibana:7.17.18
+    env_file:
+      - .env
+    volumes:
+      - kibana-data:/usr/share/kibana/data
+      - certs:/usr/share/kibana/config/certs
+      - ./monitoring/elk/kibana/setup/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./monitoring/elk/kibana/setup/import_dashboards.sh:/usr/share/kibana/import_dashboards.sh
+      - ./monitoring/elk/kibana/dashboards/:/usr/share/kibana/dashboards/
+    ports:
+      - 5601:5601
+    networks:
+      - transcendence-network
+    entrypoint: >
+      sh -c '
+        /usr/share/kibana/import_dashboards.sh & /usr/local/bin/kibana-docker'
+    restart: unless-stopped
+
+  logstash:
+    container_name: logstash
+    depends_on:
+      - filebeat
+    image: docker.elastic.co/logstash/logstash:7.17.18
+    volumes:
+      - ./monitoring/elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./monitoring/elk/logstash/pipeline/pipeline.conf:/usr/share/logstash/pipeline/pipeline.conf:ro
+      - certs:/usr/share/logstash/config/certs
+    env_file:
+      - .env
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - LOGSTASH_API_ENABLE=true # for healthcheck using curl
+    networks:
+      - transcendence-network
+    restart: unless-stopped
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.17.18
+    user: root
+    container_name: filebeat
+    volumes:
+      - certs:/usr/share/filebeat/config/certs
+      - ./monitoring/elk/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./nginx-logs:/var/log/nginx:ro
+    networks:
+      - transcendence-network
+
+
+networks:
+  transcendence-network:
+    driver: bridge
+
+volumes:
+  sqlite-data:
+  prometheus-data:
+  grafana-data:
+  es-data:
+  certs:
+  kibana-data:
+  avatars:

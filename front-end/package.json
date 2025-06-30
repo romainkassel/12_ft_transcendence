@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.4",
+    "@types/socket.io-client": "^3.0.0",
+    "chart.js": "^4.4.9",
+    "mkcert": "^3.2.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "tailwindcss": "^4.1.4"
+  }
+}
