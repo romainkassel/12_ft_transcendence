@@ -1,0 +1,14 @@
+# configuration file version
+apiVersion: 1
+
+# provider = source for the dashboards -> grafana will read these json files
+# and load them into 'ft_transcendence' directory inside the UI
+providers: 
+  - name: 'ft_transcendence'
+    folder: 'ft_transcendence'
+    type: file
+    options:
+      # path to find dashboard file on disk -> required when using type: file
+      path: /etc/grafana/provisioning/dashboards
+      updateIntervalSeconds: 10
+      allowUiUpdates: true

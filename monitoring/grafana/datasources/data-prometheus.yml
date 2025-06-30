@@ -1,0 +1,20 @@
+# configuration file version
+apiVersion: 1
+
+# datasources needed for grafana that we'll use on our dashboards
+datasources:
+  - name: prometheus
+    type: prometheus
+
+    # acces: proxy -> grafana will send http to prometheus itself,
+    # instead of relying on the user's browser to fetch the data for it
+    # both containers communicate on the internal docker network,
+    # allowing prometheus to hide from external access and avoid network restrictions
+    access: proxy
+    url: https://front-end:8080/prometheus
+    basicAuth: false
+    jsonData:
+      tlsSkipVerify: true
+
+    # we define this datasource as default for every new dashboard/panel
+    isDefault: true

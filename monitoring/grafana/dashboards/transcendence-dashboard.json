@@ -1,0 +1,63 @@
+{
+    "id": 1,
+    "uid": "7tXROPN46x",
+    "title": "Transcendence-Monitor",
+    "style": "dark",
+    "schemaVersion": "37",
+    "refresh": "10s",
+    "version": 1,
+    "panels": [
+        {
+            "targets": [
+                {
+                    "expr": "up",
+                    "refId": "A"
+                }
+            ],
+            "gridPos": { "x": 0, "y": 0, "w": 12, "h": 9 },
+            "title": "Status",
+            "type": "piechart"
+        },
+        {
+            "datasources": {
+                "type": "prometheus"
+            },
+            "targets": [
+                {
+                    "expr": "rate(prometheus_http_request_duration_seconds_sum[$__rate_interval])",
+                    "refId": "B"
+                }
+            ],
+            "gridPos": { "h": 9, "w": 12, "x": 12, "y": 0 },
+            "title": "HTTP requests duration in seconds",
+            "type": "timeseries"
+        },
+        {
+            "targets": [
+                {
+                  "expr": "rate(process_cpu_seconds_total[$__rate_interval])",
+                  "refId": "C"
+                }
+            ],
+            "title": "CPU usage rate by processes in seconds",
+            "type": "timeseries",
+            "gridPos": { "h": 9, "w": 12, "x": 0, "y": 0 }
+        },
+        {
+            "targets": [
+                {
+                    "expr": "rate(scrape_duration_seconds[5m])",
+                    "refId": "D"
+                }
+            ],
+            "title": "Time duration of each scrape in seconds",
+            "type": "timeseries",
+            "gridPos": { "h": 9, "w": 12, "x": 12, "y": 9 }
+        }
+    ],
+    "timepicker":{
+        "refresh_intervals": [ "5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h" ],
+        "status": "Stable",
+        "type": "timepicker"
+    }
+}
