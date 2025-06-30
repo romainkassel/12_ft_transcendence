@@ -8,4 +8,11 @@ This project focuses on the design, development and organisation of a complete w
 
 ## How to use this repository?
 
-1. Go to the directory where you want to clone the directory with `cd path/of/repository/`
+1. Go to the directory where you want to clone the directory: `cd path/of/repository/`
+2. Clone this repository: `git clone git@github.com:romainkassel/12_ft_transcendence.git`
+3. Enter into cloned repository: `cd 12_ft_transcendence`
+4. Open repository with VS Code: `open .`
+5. Add a `.env` file at the root of this repository
+
+> [!NOTE]
+> 
