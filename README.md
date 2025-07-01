@@ -8,10 +8,24 @@ This project focuses on the design, development and organisation of a complete w
 
 ## How to use this repository?
 
+### Recommended Operating System (OS)
+
+I recommand to use a Linux distribution such as:
+
+- Latest stable version (LTS) of Ubuntu
+- Latest stable version (LTS) of Debian
+
+### Prerequisites
+
+This project is using Docker.
+In order to follow the steps below, you have to install Docker packages first.
+
+### Steps to follow
+
 1. Go to the directory where you want to clone the directory: `cd path/of/repository/`
 2. Clone this repository: `git clone git@github.com:romainkassel/12_ft_transcendence.git`
 3. Enter into cloned repository: `cd 12_ft_transcendence`
-4. Open repository with VS Code: `open .`
+4. If you have VS Code installed, open it: `open .`
 5. At the root of this repository, rename the `.env.example` file to `.env`: `mv .env.example .env`
 6. Associate a value to each environment variable listed in the .env file
 
