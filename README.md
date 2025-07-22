@@ -25,7 +25,7 @@ In order to follow the steps below, you have to install Docker packages first.
 1. Go to the directory where you want to clone the directory: `cd path/of/repository/`
 2. Clone this repository: `git clone git@github.com:romainkassel/12_ft_transcendence.git`
 3. Enter into cloned repository: `cd 12_ft_transcendence`
-4. If you have VS Code installed, open it: `open .`
+4. If you have VS Code installed, open it: `code .`
 5. At the root of this repository, rename the `.env.example` file to `.env`: `mv .env.example .env`
 6. Associate a value to each environment variable listed in the .env file
 
