@@ -1,5 +1,7 @@
 # 12_ft_transcendence
 
+<img width="609" alt="console_ft_transcendence_ecole_42" src="https://github.com/user-attachments/assets/15d7f571-553d-4ba2-aa9c-99670efd1af6" />
+
 ## Project overview
 
 This is a 42 school project, the last one of the core curriculum.
